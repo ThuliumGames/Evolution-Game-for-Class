@@ -10,23 +10,11 @@ public class Traits : MonoBehaviour {
 	//Combined Total of 100
 	public float Health;
 	public float AttackPower;
-	//-----
-	public bool Male = false;
-	
-	//Front Ray , Left Ray , Right Ray , Back Ray , Getting Hurt , Hurting Something
-	bool[] WaysToInteract = {false, false, false, false, false, false};
-	//Between 1 and Amount of Actions
-	int[] ActionToExecute = {0, 0, 0, 0, 0, 0};
 	
 	Animator Anim;
 	
-	void Start () {
+	/*void Start () {
 		//Randomize for 1st Generation
-		int B = Random.Range(0, 2);
-		
-		if (B == 1) {
-			Male = true;
-		}
 		
 		Speed = Random.Range(0, 100);
 		Size = (100-Speed)+Random.Range (-20, 21);
@@ -44,6 +32,5 @@ public class Traits : MonoBehaviour {
 		Anim = GetComponent<Animator>();
 		Anim.SetFloat("MoveSpeed", Speed);
 		transform.localScale = Vector3.one*(Size/20);
-	}
-	
+	}*/
 }
