@@ -4,30 +4,40 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //Closest Enemy Local X : Closest Enemy Local Z : Closest Enemy Distance : Closest Food Local X : Closest Food Local Z : Closest Food Distance : Left Wall Distance: Right Wall Distance: Front Wall Distance : Enemy is Attacking//
+//0,1,2 - Time Without Enemy : 3,4,5 - Time Without Food : 6,7,8,9 - 1
 [System.Serializable]
 public class Inputs {
 	[HideInInspector]
 	public float inputValue;
-	//[HideInInspector]
+	
 	public float[] weights;
+	
+	public float weight;
 }
 
 public class NeuralNetwork : MonoBehaviour {
 	
-	public int Health = 20;
+	public int Health;
+	public int HealthPrev;
 	
-	public int Score = 20;
+	public int Score;
+	public int ScorePrev;
 	
 	public Inputs[] inputs;
 	
 	public Animator Anim;
 	AnimatorClipInfo[] AnimClipInfo;
 	public string[] AnimNames = {"Idle", "Walk", "TurnLeft", "TurnRight", "SwingSword", "Block"};
+	public float[] WeightWeights = {0.9f, 1, 0.95f, 0.95f, 1.05f, 1.05f};
 	
 	float dist = 1000000;
 	Transform closestObject = null;
 	float[] allValues = {0, 0, 0, 0, 0, 0};
 	float[] max = {0, 0};
+	[HideInInspector]
+	public float TimeAttack;
+	[HideInInspector]
+	public float TimeFood;
 	
 	public bool Attacking = false;
 	public bool Blocking = false;
@@ -67,7 +77,7 @@ public class NeuralNetwork : MonoBehaviour {
 				
 				if (N1.Score < N2.Score) {
 					
-					z = N1.Score/N2.Score;
+					z = (N1.Score+1)/(N2.Score+1);
 					
 					if (a < z) {
 						I.weights[i] = N1.inputs[x].weights[i];
@@ -76,7 +86,7 @@ public class NeuralNetwork : MonoBehaviour {
 						ChoseN1 = false;
 					}
 				} else {
-					z = N2.Score/N1.Score;
+					z = (N2.Score+1)/(N1.Score+1);
 					if (a < z) {
 						I.weights[i] = N2.inputs[x].weights[i];
 						ChoseN1 = false;
@@ -86,16 +96,16 @@ public class NeuralNetwork : MonoBehaviour {
 				}
 				
 				if (ChoseN1) {
-					if (N1.Score >= 500) {
+					if (N1.Score >= 50) {
 						I.weights[i] += UnityEngine.Random.Range(-0.001f, 0.001f);
 					} else {
-						I.weights[i] += UnityEngine.Random.Range(-0.001f*(500-N1.Score), 0.001f*(500-N1.Score));
+						I.weights[i] += UnityEngine.Random.Range(-0.001f*(50-N1.Score), 0.001f*(50-N1.Score));
 					}
 				} else {
-					if (N2.Score >= 500) {
+					if (N2.Score >= 50) {
 						I.weights[i] += UnityEngine.Random.Range(-0.001f, 0.001f);
 					} else {
-						I.weights[i] += UnityEngine.Random.Range(-0.001f*(500-N2.Score), 0.001f*(500-N2.Score));
+						I.weights[i] += UnityEngine.Random.Range(-0.001f*(50-N2.Score), 0.001f*(50-N2.Score));
 					}
 				}
 			}
@@ -104,6 +114,9 @@ public class NeuralNetwork : MonoBehaviour {
 	}
 	
 	void Update () {
+		
+		TimeAttack += Time.deltaTime;
+		TimeFood += Time.deltaTime;
 		
 		//Test if Attacking or Blocking
 		AnimClipInfo = Anim.GetCurrentAnimatorClipInfo(0);
@@ -121,6 +134,18 @@ public class NeuralNetwork : MonoBehaviour {
 		}
 		
 		int OutputValue = 0;
+		
+		//CalculateWeight
+		inputs[0].weight = 1+TimeAttack/100;
+		inputs[1].weight = 1+TimeAttack/100;
+		inputs[2].weight = 1+TimeAttack/100;
+		inputs[3].weight = 1+TimeFood/500;
+		inputs[4].weight = 1+TimeFood/500;
+		inputs[5].weight = 1+TimeFood/500;
+		inputs[6].weight = 1;
+		inputs[7].weight = 1;
+		inputs[8].weight = 1;
+		
 		
 		//Get Closest Enemy
 		GetCloseAndOutput("Enemy", 0, 1, 2);
@@ -140,7 +165,7 @@ public class NeuralNetwork : MonoBehaviour {
 		//CalculateValue
 		
 		for (int i = 0; i < allValues.Length; ++i) {
-			allValues[i] = CalculateValue(i);
+			allValues[i] = CalculateValue(i)*WeightWeights[i];
 			
 			if (allValues[i] > max[0] || i == 0) {
 				max[0] = allValues[i];
@@ -157,6 +182,10 @@ public class NeuralNetwork : MonoBehaviour {
 		for (int i = 0; i < inputs.Length; ++i) {
 			inputs[i].inputValue = 0;
 		}
+		
+		HealthPrev = Health;
+		ScorePrev  = Score;
+		
 	}
 	
 	//--------------------//
@@ -166,7 +195,7 @@ public class NeuralNetwork : MonoBehaviour {
 		float retVal = 0;
 		
 		for (int i = 0; i < inputs.Length; ++i) {
-			retVal += inputs[i].inputValue * inputs[i].weights[x];
+			retVal += inputs[i].inputValue * inputs[i].weight * inputs[i].weights[x];
 		}
 		
 		return (retVal);
@@ -199,7 +228,9 @@ public class NeuralNetwork : MonoBehaviour {
 	
 	void OnCollisionEnter (Collision other) {
 		if (other.collider.tag == "Food") {
+			TimeFood = 0;
 			Health += 5;
+			Score += 1;
 			Destroy (other.collider.gameObject);
 		}
 	}

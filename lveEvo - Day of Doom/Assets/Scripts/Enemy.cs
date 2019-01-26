@@ -20,9 +20,9 @@ public class Enemy : MonoBehaviour {
 					
 					if (T > 5) {
 						if (N.Blocking) {
-							N.Score += 2;
+							N.Score += 5;
 						} else {
-							N.Score -= 5;
+							N.Score -= 10;
 						}
 						T = 0;
 					}
@@ -33,7 +33,8 @@ public class Enemy : MonoBehaviour {
 		
 			if (Vector3.Distance(transform.position, N.transform.position) <= range) {
 				if (N.Attacking) {
-					N.Score += 5;
+					N.TimeAttack = 0;
+					N.Score += 20;
 					Destroy(this.gameObject);
 				}
 			}
