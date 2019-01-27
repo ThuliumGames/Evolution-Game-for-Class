@@ -18,21 +18,22 @@ public class Inputs {
 public class NeuralNetwork : MonoBehaviour {
 	
 	public int Health;
-	public int HealthPrev;
+	public int healthLeft;
 	
 	public int Score;
-	public int ScorePrev;
 	
 	public Inputs[] inputs;
 	
 	public Animator Anim;
-	AnimatorClipInfo[] AnimClipInfo;
+	[HideInInspector]
+	public AnimatorClipInfo[] AnimClipInfo;
 	public string[] AnimNames = {"Idle", "Walk", "TurnLeft", "TurnRight", "SwingSword", "Block"};
 	public float[] WeightWeights = {0.9f, 1, 0.95f, 0.95f, 1.05f, 1.05f};
 	
 	float dist = 1000000;
 	Transform closestObject = null;
-	float[] allValues = {0, 0, 0, 0, 0, 0};
+	[HideInInspector]
+	public float[] allValues = {0, 0, 0, 0, 0, 0};
 	float[] max = {0, 0};
 	[HideInInspector]
 	public float TimeAttack;
@@ -43,6 +44,8 @@ public class NeuralNetwork : MonoBehaviour {
 	public bool Blocking = false;
 	
 	public void OnCreation () {
+		
+		GetComponent<Traits>().CreateNew();
 		
 		foreach (Inputs I in inputs) {
 			Array.Resize (ref I.weights, 6);
@@ -64,6 +67,9 @@ public class NeuralNetwork : MonoBehaviour {
 	}
 	
 	public void GenerateSimilar (NeuralNetwork N1, NeuralNetwork N2) {
+		
+		GetComponent<Traits>().CreateSimilar(N1.GetComponent<Traits>(), N2.GetComponent<Traits>());
+		
 		int x = 0;
 		foreach (Inputs I in inputs) {
 			Array.Resize (ref I.weights, 6);
@@ -113,7 +119,22 @@ public class NeuralNetwork : MonoBehaviour {
 		}
 	}
 	
+	void Start () {
+		healthLeft = (int)GetComponent<Traits>().Health;
+	}
+	
 	void Update () {
+		
+		//Reset Numbers
+		for (int i = 0; i < inputs.Length; ++i) {
+			inputs[i].inputValue = 0;
+		}
+		
+		healthLeft = (int)Mathf.Clamp (healthLeft, -1, GetComponent<Traits>().Health);
+		
+		if (healthLeft <= 0) {
+			Destroy(gameObject);
+		}
 		
 		TimeAttack += Time.deltaTime;
 		TimeFood += Time.deltaTime;
@@ -178,13 +199,17 @@ public class NeuralNetwork : MonoBehaviour {
 		//Play Anim
 		Anim.Play(AnimNames[OutputValue]);
 		
-		//Reset Numbers
-		for (int i = 0; i < inputs.Length; ++i) {
-			inputs[i].inputValue = 0;
-		}
+		//Camera Follow This
 		
-		HealthPrev = Health;
-		ScorePrev  = Score;
+		if (Input.GetKeyDown(KeyCode.Mouse0)) {
+			RaycastHit theObject;
+			if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out theObject, Mathf.Infinity)) {
+				if (theObject.collider.gameObject == gameObject) {
+					Camera.main.GetComponent<God>().following = true;
+					Camera.main.GetComponent<God>().objectToFollow = transform;
+				}
+			}
+		}
 		
 	}
 	
@@ -230,6 +255,7 @@ public class NeuralNetwork : MonoBehaviour {
 		if (other.collider.tag == "Food") {
 			TimeFood = 0;
 			Health += 5;
+			++healthLeft;
 			Score += 1;
 			Destroy (other.collider.gameObject);
 		}

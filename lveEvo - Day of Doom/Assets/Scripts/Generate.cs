@@ -16,9 +16,17 @@ public class Generate : MonoBehaviour {
 	
 	float[] scores;
 	
+	public GameObject sideScreen;
+	
+	void Start () {
+		sideScreen.SetActive(false);
+	}
+	
 	void Update () {
 		
 		if (Input.GetKeyDown(KeyCode.Space)) {
+			
+			sideScreen.SetActive(true);
 			
 			Array.Resize (ref scores, GameObject.FindObjectsOfType<NeuralNetwork>().Length);
 			
@@ -47,9 +55,9 @@ public class Generate : MonoBehaviour {
 				}
 				
 				if (food) {
-					DestOnGen[i] = Instantiate (FoodPrefab, new Vector3 (UnityEngine.Random.Range(-100, 100), 0, UnityEngine.Random.Range(-100, 100)), Quaternion.Euler (0, UnityEngine.Random.Range(0, 360), 0));
+					DestOnGen[i] = Instantiate (FoodPrefab, new Vector3 (UnityEngine.Random.Range(-250, 250), 0, UnityEngine.Random.Range(-250, 250)), Quaternion.Euler (0, UnityEngine.Random.Range(0, 360), 0));
 				} else {
-					DestOnGen[i] = Instantiate (EnemyPrefab, new Vector3 (UnityEngine.Random.Range(-100, 100), 0, UnityEngine.Random.Range(-100, 100)), Quaternion.Euler (0, UnityEngine.Random.Range(0, 360), 0));
+					DestOnGen[i] = Instantiate (EnemyPrefab, new Vector3 (UnityEngine.Random.Range(-250, 250), 0, UnityEngine.Random.Range(-250, 250)), Quaternion.Euler (0, UnityEngine.Random.Range(0, 360), 0));
 				}
 				
 				food = !food;
@@ -73,7 +81,7 @@ public class Generate : MonoBehaviour {
 					}
 					
 					for (int i = 0; i < 100; ++i) {
-						GameObject G = Instantiate (WarriorPrefab, new Vector3 (UnityEngine.Random.Range(-50, 50), 1, UnityEngine.Random.Range(-50, 50)), Quaternion.Euler (0, UnityEngine.Random.Range(0, 360), 0));
+						GameObject G = Instantiate (WarriorPrefab, new Vector3 (UnityEngine.Random.Range(-250, 250), 5, UnityEngine.Random.Range(-250, 250)), Quaternion.Euler (0, UnityEngine.Random.Range(0, 360), 0));
 						G.GetComponent<NeuralNetwork>().GenerateSimilar (GenePool[UnityEngine.Random.Range(0, GenePool.Length)], GenePool[UnityEngine.Random.Range(0, GenePool.Length)]);
 					}
 					
@@ -84,11 +92,11 @@ public class Generate : MonoBehaviour {
 				} else {
 					
 					for (int i = 0; i < 100; ++i) {
-						GameObject G = Instantiate (WarriorPrefab, new Vector3 (UnityEngine.Random.Range(-50, 50), 1, UnityEngine.Random.Range(-50, 50)), Quaternion.Euler (0, UnityEngine.Random.Range(0, 360), 0));
+						GameObject G = Instantiate (WarriorPrefab, new Vector3 (UnityEngine.Random.Range(-250, 250), 5, UnityEngine.Random.Range(-250, 250)), Quaternion.Euler (0, UnityEngine.Random.Range(0, 360), 0));
 						G.GetComponent<NeuralNetwork>().OnCreation ();
 					}
 				}
 			}
-		}
+			}
 	}
 }

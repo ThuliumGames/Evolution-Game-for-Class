@@ -4,38 +4,55 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour {
 	
-	float range = 5;
+	public float Health = 25;
+	bool canGetHit = true;
 	
-	NeuralNetwork[] NN;
+	float range = 10;
+	
+	public static NeuralNetwork[] NN;
 	
 	float T = 0;
 	
 	void Update () {
-		NN = GameObject.FindObjectsOfType<NeuralNetwork>();
-		T += Time.deltaTime;
 		
-		foreach (NeuralNetwork N in NN) {
-			if (T > 2f) {
-				if (Vector3.Distance(transform.position, N.transform.position) <= range) {
-					
-					if (T > 5) {
-						if (N.Blocking) {
-							N.Score += 5;
-						} else {
-							N.Score -= 10;
+		if (name == "StayForever") {
+			NN = GameObject.FindObjectsOfType<NeuralNetwork>();
+		} else {
+			
+			T += Time.deltaTime;
+			
+			for (int i = 0; i < NN.Length; ++i) {
+				
+				if (Vector3.Distance(transform.position, NN[i].transform.position) <= range) {
+				
+					if (T > 2f) {
+						if (T > 5) {
+							if (NN[i].Blocking) {
+								NN[i].Score += 5;
+							} else {
+								NN[i].Score -= 10;
+								--NN[i].healthLeft;
+							}
+							T = 0;
 						}
-						T = 0;
+						
+						NN[i].BeingAttacked(T);
 					}
 					
-					N.BeingAttacked(T);
-				}
-			}
-		
-			if (Vector3.Distance(transform.position, N.transform.position) <= range) {
-				if (N.Attacking) {
-					N.TimeAttack = 0;
-					N.Score += 20;
-					Destroy(this.gameObject);
+					if (NN[i].Attacking) {
+						if (canGetHit) {
+							NN[i].TimeAttack = 0;
+							NN[i].Score += 10;
+							Health -= NN[i].GetComponent<Traits>().AttackPower;
+							canGetHit = false;
+							if (Health <= 0) {
+								NN[i].Score += 20;
+								Destroy(this.gameObject);
+							}
+						}
+					} else {
+						canGetHit = true;
+					}
 				}
 			}
 		}
