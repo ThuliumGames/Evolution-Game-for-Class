@@ -42,6 +42,8 @@ public class God : MonoBehaviour {
 						following = false;
 					}
 				}
+			} else {
+				following = false;
 			}
 		}
 		

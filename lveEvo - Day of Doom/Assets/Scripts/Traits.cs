@@ -17,7 +17,7 @@ public class Traits : MonoBehaviour {
 	
 	Animator Anim;
 	
-	GameObject sideScreen;
+	Animator sideScreen;
 	
 	string[] names = {"Score", "Food", "Size", "Speed", "MaxHealth", "AttackPower", "Health"};
 	Text[] stats;
@@ -34,7 +34,7 @@ public class Traits : MonoBehaviour {
 		
 		nameOfChar = GameObject.Find("CharName").GetComponent<Text>();
 		
-		sideScreen = GameObject.Find("WarriorDisplay");
+		sideScreen = GameObject.Find("WarriorDisplay").GetComponent<Animator>();
 		
 		System.Array.Resize (ref stats, 7);
 		
@@ -54,7 +54,9 @@ public class Traits : MonoBehaviour {
 		transform.localScale = Vector3.one*(Size/20);
 		
 		if (Camera.main.GetComponent<God>().following) {
-			sideScreen.SetActive(true);
+			if (sideScreen.GetCurrentAnimatorClipInfo(0)[0].clip.name == "Hidden") {
+				sideScreen.Play("ShowSide");
+			}
 			
 			if (Camera.main.GetComponent<God>().objectToFollow == transform) {
 				//Set all Text
@@ -73,6 +75,8 @@ public class Traits : MonoBehaviour {
 				
 				nameOfChar.text = name;
 				
+				GameObject.Find("MoodImage").GetComponent<Image>().sprite = GetComponentInChildren<Mood>().HisMood.sprite;
+				
 				for (int i = 0; i < Nodes2.Length; ++i) {
 					Nodes2[i].text = ((int)GetComponent<NeuralNetwork>().inputs[i].inputValue).ToString();
 				}
@@ -85,7 +89,9 @@ public class Traits : MonoBehaviour {
 			}
 			
 		} else {
-			sideScreen.SetActive(false);
+			if (sideScreen.GetCurrentAnimatorClipInfo(0)[0].clip.name == "Shown") {
+				sideScreen.Play("HideSide");
+			}
 		}
 	}
 	
@@ -93,12 +99,12 @@ public class Traits : MonoBehaviour {
 		//Randomize for 1st Generation
 		
 		Speed = Random.Range(0, 101);
-		Size = (100-Speed)+Random.Range (-20, 21);
-		Speed += Random.Range (-20, 21);
+		Size = (100-Speed)+Random.Range (-10, 11);
+		Speed += Random.Range (-10, 11);
 		
 		Health = Random.Range(0, 101);
-		AttackPower = (100-Health)+Random.Range (-20, 21);
-		Health += Random.Range (-20, 21);
+		AttackPower = (100-Health)+Random.Range (-10, 11);
+		Health += Random.Range (-10, 11);
 		
 		Size = Mathf.Clamp (Size, 10, 50);
 		Speed = Mathf.Clamp (Speed, 10, 50);
@@ -111,34 +117,54 @@ public class Traits : MonoBehaviour {
 
 		int T1Or2 = Random.Range (0, 2);
 		
+		float R1 = (T1.GetComponent<NeuralNetwork>().Score/10);
+		if (R1 == 0) {
+			if (R1 >= 0) {
+				R1 = 1;
+			} else {
+				R1 = -1;
+			}
+		}
+		float R2 = (T2.GetComponent<NeuralNetwork>().Score/10);
+		if (Mathf.Abs(R2) < 1) {
+			if (R2 >= 0) {
+				R2 = 1;
+			} else {
+				R2 = -1;
+			}
+		}
+		
+		R1 = 10/R1;
+		R2 = 10/R2;
+		
 		if (T1Or2 == 0) {
-			Speed = T1.Speed + Random.Range ((int)(-20/((T1.GetComponent<NeuralNetwork>().Score/10)+1)), (int)(20/((T1.GetComponent<NeuralNetwork>().Score/10)+1)));
+			Speed = T1.Speed + Random.Range ((int)-R1, (int)R1+1);
 		} else {
-			Speed = T2.Speed + Random.Range ((int)(-20/((T2.GetComponent<NeuralNetwork>().Score/10)+1)), (int)(20/((T2.GetComponent<NeuralNetwork>().Score/10)+1)));
+			Speed = T2.Speed + Random.Range ((int)-R2, (int)R2+1);
 		}
 		
 		T1Or2 = Random.Range (0, 2);
 		
 		if (T1Or2 == 0) {
-			Size = T1.Size + Random.Range ((int)(-20/((T1.GetComponent<NeuralNetwork>().Score/10)+1)), (int)(20/((T1.GetComponent<NeuralNetwork>().Score/10)+1)));
-		} else {
-			Speed = T2.Size + Random.Range ((int)(-20/((T2.GetComponent<NeuralNetwork>().Score/10)+1)), (int)(20/((T2.GetComponent<NeuralNetwork>().Score/10)+1)));
+			Size = T1.Size + Random.Range ((int)-R1, (int)R1+1);
+		} else {                          
+			Size = T2.Size + Random.Range ((int)-R2, (int)R2+1);
 		}
 		
 		T1Or2 = Random.Range (0, 2);
 		
 		if (T1Or2 == 0) {
-			Health = T1.Health + Random.Range ((int)(-20/((T1.GetComponent<NeuralNetwork>().Score/10)+1)), (int)(20/((T1.GetComponent<NeuralNetwork>().Score/10)+1)));
-		} else {
-			Health = T2.Health + Random.Range ((int)(-20/((T2.GetComponent<NeuralNetwork>().Score/10)+1)), (int)(20/((T2.GetComponent<NeuralNetwork>().Score/10)+1)));
+			Health = T1.Health + Random.Range ((int)-R1, (int)R1+1);
+		} else {                              
+			Health = T2.Health + Random.Range ((int)-R2, (int)R2+1);
 		}
 		
 		T1Or2 = Random.Range (0, 2);
 		
 		if (T1Or2 == 0) {
-			AttackPower = T1.AttackPower + Random.Range ((int)(-20/((T1.GetComponent<NeuralNetwork>().Score/10)+1)), (int)(20/((T1.GetComponent<NeuralNetwork>().Score/10)+1)));
-		} else {
-			AttackPower = T2.AttackPower + Random.Range ((int)(-20/((T2.GetComponent<NeuralNetwork>().Score/10)+1)), (int)(20/((T2.GetComponent<NeuralNetwork>().Score/10)+1)));
+			AttackPower = T1.AttackPower + Random.Range ((int)-R1, (int)R1+1);
+		} else {                                        
+			AttackPower = T2.AttackPower + Random.Range ((int)-R2, (int)R2+1);
 		}
 		
 		Size = Mathf.Clamp (Size, 10, 50);

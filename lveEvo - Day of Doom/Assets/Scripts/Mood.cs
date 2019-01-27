@@ -31,7 +31,7 @@ public class Mood : MonoBehaviour {
 			
 			HisName.text = GetComponentInParent<Traits>().name;
 			
-			size.LookAt (Camera.main.transform.position);
+			size.LookAt (Camera.main.transform.position, Camera.main.transform.up);
 			size.localScale = new Vector3(-1, 1, 1)*Mathf.Clamp(dis/GetComponentInParent<Traits>().Size, 1, 100);
 			
 			if (NN.Health >= 20) {
@@ -39,14 +39,16 @@ public class Mood : MonoBehaviour {
 			} else {
 				CanReproduce.enabled = false;
 			}
-			
-			if (NN.TimeFood > 40) {
-				HisMood.sprite = MoodImages[1];
-			} else if (NN.TimeAttack > 40) {
-				HisMood.sprite = MoodImages[2];
-			} else {
-				HisMood.sprite = MoodImages[0];
-			}
+		}
+		
+		if (NN.healthLeft <= 5) {
+			HisMood.sprite = MoodImages[3];
+		} else if (NN.TimeFood > 40) {
+			HisMood.sprite = MoodImages[1];
+		} else if (NN.TimeAttack > 40) {
+			HisMood.sprite = MoodImages[2];
+		} else {
+			HisMood.sprite = MoodImages[0];
 		}
 	}
 	

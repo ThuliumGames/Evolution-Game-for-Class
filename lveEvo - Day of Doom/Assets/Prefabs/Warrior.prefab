@@ -36,7 +36,7 @@ GameObject:
   - component: {fileID: 224786251804090552}
   - component: {fileID: 222952931053391266}
   - component: {fileID: 114740869539212814}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: TextBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -68,7 +68,8 @@ GameObject:
   - component: {fileID: 224679075181402400}
   - component: {fileID: 222294519241963826}
   - component: {fileID: 114525617072677018}
-  m_Layer: 0
+  - component: {fileID: 114456139268040908}
+  m_Layer: 5
   m_Name: CharsName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,7 +86,7 @@ GameObject:
   - component: {fileID: 224014675168869928}
   - component: {fileID: 222189986851250166}
   - component: {fileID: 114525684882101970}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Heart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,7 +118,7 @@ GameObject:
   - component: {fileID: 224478948004924802}
   - component: {fileID: 222972692627256926}
   - component: {fileID: 114580840982041232}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: TheMood
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -231,7 +232,7 @@ GameObject:
   - component: {fileID: 114057937446665630}
   - component: {fileID: 114474460067607278}
   - component: {fileID: 95855993559649728}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Feelings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -886,14 +887,14 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1851761050359638}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 10
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
-  m_CollisionDetection: 2
+  m_Constraints: 84
+  m_CollisionDetection: 0
 --- !u!95 &95855993559649728
 Animator:
   serializedVersion: 3
@@ -982,6 +983,20 @@ MonoBehaviour:
   Speed: 0
   Health: 0
   AttackPower: 0
+--- !u!114 &114456139268040908
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1106874652781496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -900027084, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 2, y: 2}
+  m_UseGraphicAlpha: 1
 --- !u!114 &114474460067607278
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1002,6 +1017,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 34aabafd11b893245a1e263d93a7149e, type: 3}
   - {fileID: 21300000, guid: 83bc766067915cb4aa3fc0ecc9436646, type: 3}
   - {fileID: 21300000, guid: 4961f8fb7a40e4c4ca9447d5768a6628, type: 3}
+  - {fileID: 21300000, guid: 49da89577646de246b03c6d5f70799f0, type: 3}
 --- !u!114 &114525617072677018
 MonoBehaviour:
   m_ObjectHideFlags: 1
