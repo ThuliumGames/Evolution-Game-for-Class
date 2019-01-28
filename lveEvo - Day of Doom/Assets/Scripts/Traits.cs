@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class Traits : MonoBehaviour {
 	
-	string[] charNames1 = {"Tug", "Gru", "Bor", "Du", "Gor", "Dom", "Bru", "cug", "Frub", "Tac", "Bod", "Gub", "Duc", "Ruc", "Brog", "Fu", "Dug", "Gur", "Dod", "Trud"};
-	string[] charNames2 = {"tug", "dub", "gug", "du", "dig", "dom", "bom", "rag", "dor", "bug", "den", "tob", "rub", "gud", "cug", "nam", "dog", "tuc", "", ""};
+	string[] charNames1 = {"Tug", "Gru", "Bor", "Du", "Gor", "Dom", "Bru", "cug", "Frub", "Tac", "Boc", "Gub", "Duc", "Ruc", "Brog", "Fu", "Dug", "Gur", "Dub", "Trud"};
+	string[] charNames2 = {"tug", "dub", "gug", "du", "dig", "dom", "bom", "rag", "dor", "bug", "den", "tob", "rub", "gud", "cug", "turk", "dog", "tuc", "", ""};
 	
 	//Combined Total of 100
 	public float Size;
@@ -78,7 +78,7 @@ public class Traits : MonoBehaviour {
 				GameObject.Find("MoodImage").GetComponent<Image>().sprite = GetComponentInChildren<Mood>().HisMood.sprite;
 				
 				for (int i = 0; i < Nodes2.Length; ++i) {
-					Nodes2[i].text = ((int)GetComponent<NeuralNetwork>().inputs[i].inputValue).ToString();
+					Nodes2[i].text = (((int)(GetComponent<NeuralNetwork>().inputs[i].inputValue*(GetComponent<NeuralNetwork>().inputs[i].weight))).ToString());
 				}
 				
 				for (int i = 0; i < Nodes3.Length; ++i) {

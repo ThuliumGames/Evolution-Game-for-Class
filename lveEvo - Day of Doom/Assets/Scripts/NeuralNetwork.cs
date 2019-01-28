@@ -25,6 +25,7 @@ public class NeuralNetwork : MonoBehaviour {
 	public Inputs[] inputs;
 	
 	public Animator Anim;
+	public GameObject Death;
 	[HideInInspector]
 	public AnimatorClipInfo[] AnimClipInfo;
 	public string[] AnimNames = {"Idle", "Walk", "TurnLeft", "TurnRight", "SwingSword", "Block"};
@@ -259,9 +260,16 @@ public class NeuralNetwork : MonoBehaviour {
 			Score += 1;
 			Destroy (other.collider.gameObject);
 		}
+		if (other.collider.tag == "Lightning") {
+			Destroy (this.gameObject);
+		}
 	}
 	
 	public void BeingAttacked (float N) {
 		inputs[9].inputValue = N;
+	}
+	
+	void OnDestroy() {
+		Instantiate(Death, transform.position, Quaternion.identity);
 	}
 }

@@ -10,6 +10,12 @@ public class Music : MonoBehaviour {
 	float t = 0;
 	
 	void Update () {
+		if (t > 0) {
+			if (!GetComponent<AudioSource>().isPlaying) {
+				GetComponent<AudioSource>().Play();
+			}
+		}
+		
 		t += Time.deltaTime;
 		
 		if (t >= SwitchTime) {

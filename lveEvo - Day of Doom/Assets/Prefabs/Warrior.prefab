@@ -1238,6 +1238,7 @@ MonoBehaviour:
     - 0
     weight: 0
   Anim: {fileID: 95937620107924600}
+  Death: {fileID: 1645118942522872, guid: e7982b5d8e9b4f04c9e4c11f11f9244e, type: 2}
   AnimNames:
   - Idle
   - Walk
