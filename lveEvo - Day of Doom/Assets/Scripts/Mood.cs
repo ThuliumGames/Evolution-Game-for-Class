@@ -33,12 +33,7 @@ public class Mood : MonoBehaviour {
 			
 			size.LookAt (Camera.main.transform.position, Camera.main.transform.up);
 			size.localScale = new Vector3(-1, 1, 1)*Mathf.Clamp(dis/GetComponentInParent<Traits>().Size, 1, 100);
-			
-			if (NN.Health >= 20) {
-				CanReproduce.enabled = true;
-			} else {
-				CanReproduce.enabled = false;
-			}
+			CanReproduce.enabled = false;
 		}
 		
 		if (NN.healthLeft <= 5) {

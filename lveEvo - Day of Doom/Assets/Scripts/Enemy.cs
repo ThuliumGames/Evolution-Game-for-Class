@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour {
 	
-	public float Health = 25;
+	public Animator Anim;
+	public GameObject Death;
+	
+	public float Health = 50;
 	bool canGetHit = true;
 	
 	float range = 10;
@@ -12,20 +15,39 @@ public class Enemy : MonoBehaviour {
 	public static NeuralNetwork[] NN;
 	
 	float T = 0;
+	int C = 0;
+	
+	bool isClose = false;
 	
 	void Update () {
 		
 		if (name == "StayForever") {
 			NN = GameObject.FindObjectsOfType<NeuralNetwork>();
-		} else {
+		} else if (NN != null) {
 			
-			T += Time.deltaTime;
+			float dist = 100000;
+			isClose = false;
 			
 			for (int i = 0; i < NN.Length; ++i) {
 				
-				if (Vector3.Distance(transform.position, NN[i].transform.position) <= range) {
+				float thisDist = Vector3.Distance(transform.position, NN[i].transform.position);
 				
-					if (T > 2f) {
+				if (thisDist <= dist) {
+					dist = thisDist;
+					C = i;
+				}
+				
+				if (thisDist <= range) {
+					
+					Anim.SetBool("Move", false);
+					isClose = true;
+				
+					T += Time.deltaTime;
+				
+					if (T > 2) {
+						
+						Anim.SetBool("Swing", true);
+						
 						if (T > 5) {
 							if (NN[i].Blocking) {
 								NN[i].Score += 5;
@@ -34,6 +56,7 @@ public class Enemy : MonoBehaviour {
 								--NN[i].healthLeft;
 							}
 							T = 0;
+							Anim.SetBool("Swing", false);
 						}
 						
 						NN[i].BeingAttacked(T);
@@ -55,6 +78,24 @@ public class Enemy : MonoBehaviour {
 					}
 				}
 			}
+			
+			if (!isClose) {
+				Anim.SetBool("Move", true);
+				Anim.SetBool("Swing", false);
+			}
+			
+			transform.LookAt(NN[C].transform.position);
+			
 		}
+	}
+	
+	void OnCollisionEnter (Collision other) {
+		if (other.collider.tag == "Lightning") {
+			Destroy (this.gameObject);
+		}
+	}
+	
+	void OnDestroy() {
+		Instantiate(Death, transform.position, Quaternion.identity);
 	}
 }
