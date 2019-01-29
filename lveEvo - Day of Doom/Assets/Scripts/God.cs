@@ -11,10 +11,13 @@ public class God : MonoBehaviour {
 	public float angSpeed;
 	
 	public GameObject FoodObject;
+	public GameObject Lightning;
+	public LayerMask LM;
 	
 	public bool following;
 	public Transform objectToFollow;
 	float height;
+	float ThrowPower = 0;
 	
 	void Update () {
 		
@@ -26,7 +29,7 @@ public class God : MonoBehaviour {
 				AngX += -Input.GetAxis("Mouse Y")*angSpeed*Time.deltaTime;
 				AngY += Input.GetAxis("Mouse X")*angSpeed*Time.deltaTime;
 			}
-			transform.Translate(0, 0, Input.GetAxis("Mouse ScrollWheel")*speed*10*Time.deltaTime);
+			transform.Translate(0, 0, Input.GetAxis("Mouse ScrollWheel")*speed*20*Time.deltaTime);
 		} else {
 			
 			//followWarrior
@@ -49,12 +52,32 @@ public class God : MonoBehaviour {
 		
 		transform.eulerAngles = new Vector3 (AngX, AngY, 0);
 		
+		float MaxX = 489.5f*Mathf.Cos(Mathf.Asin(transform.position.z/489.5f));
+		float MaxZ = 489.5f*Mathf.Cos(Mathf.Asin(transform.position.x/489.5f));
+		
+		transform.position = new Vector3 (Mathf.Clamp(transform.position.x, -MaxX, MaxX), Mathf.Clamp(transform.position.y, 0.1f, 70), Mathf.Clamp(transform.position.z, -MaxZ, MaxZ));
+		
 		//Food
-		if (Input.GetKeyDown(KeyCode.F)) {
-			GameObject G = Instantiate (FoodObject, transform.position + ((transform.right*((Input.mousePosition.x-(Screen.width/2))/Screen.width))*2) + ((transform.up*((Input.mousePosition.y-(Screen.height/2))/Screen.height))*2) + (transform.forward*2), transform.rotation);
+		
+		if (Input.GetKey(KeyCode.F)) {
+			ThrowPower += Time.deltaTime*50;
+		}
+		if (Input.GetKeyUp(KeyCode.F)) {
+			ThrowPower = Mathf.Clamp (ThrowPower, 1, 750);
+			GameObject G = Instantiate (FoodObject, transform.position + ((transform.right*((Input.mousePosition.x-(Screen.width/2))/Screen.width))*3.75f) + ((transform.up*((Input.mousePosition.y-(Screen.height/2))/Screen.height))*2.75f) + (transform.forward*2), transform.rotation);
 			G.transform.LookAt (transform.position);
 			G.transform.Rotate (0, 180, 0);
-			G.GetComponent<Rigidbody>().AddRelativeForce (0, 0, 5000);
+			G.GetComponent<Rigidbody>().AddRelativeForce (0, 0, 500*ThrowPower);
+			ThrowPower = 0;
+		}
+		
+		if (Input.GetKeyDown(KeyCode.L)) {
+			
+			RaycastHit theObject;
+			
+			if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out theObject, Mathf.Infinity, LM)) {
+				Instantiate (Lightning, new Vector3 (theObject.point.x, 0, theObject.point.z), Quaternion.identity);
+			}
 		}
 	}
 }

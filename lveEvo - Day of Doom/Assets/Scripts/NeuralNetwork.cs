@@ -25,6 +25,7 @@ public class NeuralNetwork : MonoBehaviour {
 	public Inputs[] inputs;
 	
 	public Animator Anim;
+	public GameObject Death;
 	[HideInInspector]
 	public AnimatorClipInfo[] AnimClipInfo;
 	public string[] AnimNames = {"Idle", "Walk", "TurnLeft", "TurnRight", "SwingSword", "Block"};
@@ -53,15 +54,15 @@ public class NeuralNetwork : MonoBehaviour {
 			int StartNum = UnityEngine.Random.Range (0, I.weights.Length);
 			for (int i = 0; i < I.weights.Length; ++i) {
 				if (i == 0) {
-					I.weights[StartNum] = UnityEngine.Random.Range(0, 10-Total);
+					I.weights[StartNum] = UnityEngine.Random.Range(-10+Total, 10-Total);
 				} else {
 					if (i <= StartNum) {
-						I.weights[i-1] = UnityEngine.Random.Range(0, 10-Total);
+						I.weights[i-1] = UnityEngine.Random.Range(-10+Total, 10-Total);
 					} else {
-						I.weights[i] = UnityEngine.Random.Range(0, 10-Total);
+						I.weights[i] = UnityEngine.Random.Range(-10+Total, 10-Total);
 					}
 				}
-				Total += I.weights[i];
+				Total += Mathf.Abs(I.weights[i]);
 			}
 		}
 	}
@@ -103,17 +104,20 @@ public class NeuralNetwork : MonoBehaviour {
 				
 				if (ChoseN1) {
 					if (N1.Score >= 50) {
-						I.weights[i] += UnityEngine.Random.Range(-0.001f, 0.001f);
+						I.weights[i] += UnityEngine.Random.Range(-0.01f, 0.01f);
 					} else {
-						I.weights[i] += UnityEngine.Random.Range(-0.001f*(50-N1.Score), 0.001f*(50-N1.Score));
+						I.weights[i] += UnityEngine.Random.Range(-0.5f/N1.Score, 0.5f/N1.Score);
 					}
 				} else {
 					if (N2.Score >= 50) {
-						I.weights[i] += UnityEngine.Random.Range(-0.001f, 0.001f);
+						I.weights[i] += UnityEngine.Random.Range(-0.01f, 0.01f);
 					} else {
-						I.weights[i] += UnityEngine.Random.Range(-0.001f*(50-N2.Score), 0.001f*(50-N2.Score));
+						I.weights[i] += UnityEngine.Random.Range(-0.5f/N2.Score, 0.5f/N2.Score);
 					}
 				}
+				
+				I.weights[i] = Mathf.Clamp(I.weights[i], -20, 20);
+				
 			}
 			++x;
 		}
@@ -160,9 +164,9 @@ public class NeuralNetwork : MonoBehaviour {
 		inputs[0].weight = 1+TimeAttack/100;
 		inputs[1].weight = 1+TimeAttack/100;
 		inputs[2].weight = 1+TimeAttack/100;
-		inputs[3].weight = 1+TimeFood/500;
-		inputs[4].weight = 1+TimeFood/500;
-		inputs[5].weight = 1+TimeFood/500;
+		inputs[3].weight = 1+(TimeFood/100)/healthLeft;
+		inputs[4].weight = 1+(TimeFood/100)/healthLeft;
+		inputs[5].weight = 1+(TimeFood/100)/healthLeft;
 		inputs[6].weight = 1;
 		inputs[7].weight = 1;
 		inputs[8].weight = 1;
@@ -259,9 +263,16 @@ public class NeuralNetwork : MonoBehaviour {
 			Score += 1;
 			Destroy (other.collider.gameObject);
 		}
+		if (other.collider.tag == "Lightning") {
+			Destroy (this.gameObject);
+		}
 	}
 	
 	public void BeingAttacked (float N) {
 		inputs[9].inputValue = N;
+	}
+	
+	void OnDestroy() {
+		Instantiate(Death, transform.position, Quaternion.identity);
 	}
 }
