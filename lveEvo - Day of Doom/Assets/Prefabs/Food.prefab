@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4005526703040664}
   - component: {fileID: 33171564709418078}
   - component: {fileID: 23858435960751032}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36,7 +36,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4719471030400870}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: AppleModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53,7 +53,7 @@ GameObject:
   - component: {fileID: 4065114563765088}
   - component: {fileID: 33589998040258830}
   - component: {fileID: 23699058997707316}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube_001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,7 +70,7 @@ GameObject:
   - component: {fileID: 4900032132769700}
   - component: {fileID: 54021949245484232}
   - component: {fileID: 135283504090600068}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Food
   m_TagString: Food
   m_Icon: {fileID: 0}
@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 4630820300183784}
   - component: {fileID: 33492859445008348}
   - component: {fileID: 23498807725736804}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube_002
   m_TagString: Untagged
   m_Icon: {fileID: 0}

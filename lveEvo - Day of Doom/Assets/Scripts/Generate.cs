@@ -54,56 +54,35 @@ public class Generate : MonoBehaviour {
 		
 		
 		if (Input.GetKeyDown(KeyCode.Space)) {
-			
-			Array.Resize (ref scores, GameObject.FindObjectsOfType<NeuralNetwork>().Length);
-			
-			int CanRegen = 0;
+				
+			//Spawn Warriors
+			Array.Resize (ref GenePool, 0);
 			
 			if (GameObject.FindObjectsOfType<NeuralNetwork>().Length != 0) {
-				int x = 0;
+				
 				foreach (NeuralNetwork NN in GameObject.FindObjectsOfType<NeuralNetwork>()) {
-					if (NN.Health >= 20) {
-						++CanRegen;
+					for (int i = 0; i < NN.Health+1; ++i) {
+						Array.Resize (ref GenePool, GenePool.Length+1);
+						GenePool[GenePool.Length-1] = NN;
 					}
-					scores[x] = NN.Score;
-					++x;
 				}
-			} else {
-				CanRegen = 100;
-			}
-			
-			if (CanRegen >= 2) {
 				
-				//Spawn Warriors
-				Array.Resize (ref GenePool, 0);
+				for (int i = 0; i < 100; ++i) {
+					GameObject G = Instantiate (WarriorPrefab, new Vector3 (UnityEngine.Random.Range(-250, 250), 0, UnityEngine.Random.Range(-250, 250)), Quaternion.Euler (0, UnityEngine.Random.Range(0, 360), 0));
+					G.GetComponent<NeuralNetwork>().GenerateSimilar (GenePool[UnityEngine.Random.Range(0, GenePool.Length)], GenePool[UnityEngine.Random.Range(0, GenePool.Length)]);
+				}
 				
-				if (GameObject.FindObjectsOfType<NeuralNetwork>().Length != 0) {
-					int a = 0;
-					foreach (NeuralNetwork NN in GameObject.FindObjectsOfType<NeuralNetwork>()) {
-						if (NN.Health >= 20) {
-							Array.Resize (ref GenePool, GenePool.Length+1);
-							GenePool[GenePool.Length-1] = NN;
-						} else {
-							Destroy(NN.gameObject);
-						}
-						++a;
-					}
-					
-					for (int i = 0; i < 100; ++i) {
-						GameObject G = Instantiate (WarriorPrefab, new Vector3 (UnityEngine.Random.Range(-250, 250), 0, UnityEngine.Random.Range(-250, 250)), Quaternion.Euler (0, UnityEngine.Random.Range(0, 360), 0));
-						G.GetComponent<NeuralNetwork>().GenerateSimilar (GenePool[UnityEngine.Random.Range(0, GenePool.Length)], GenePool[UnityEngine.Random.Range(0, GenePool.Length)]);
-					}
-					
-					for (int i = 0; i < GenePool.Length; ++i) {
+				for (int i = 0; i < GenePool.Length; ++i) {
+					if (GenePool[i] != null) {
 						Destroy(GenePool[i].gameObject);
 					}
-					
-				} else {
-					
-					for (int i = 0; i < 100; ++i) {
-						GameObject G = Instantiate (WarriorPrefab, new Vector3 (UnityEngine.Random.Range(-250, 250), 0, UnityEngine.Random.Range(-250, 250)), Quaternion.Euler (0, UnityEngine.Random.Range(0, 360), 0));
-						G.GetComponent<NeuralNetwork>().OnCreation ();
-					}
+				}
+				
+			} else {
+				
+				for (int i = 0; i < 100; ++i) {
+					GameObject G = Instantiate (WarriorPrefab, new Vector3 (UnityEngine.Random.Range(-250, 250), 0, UnityEngine.Random.Range(-250, 250)), Quaternion.Euler (0, UnityEngine.Random.Range(0, 360), 0));
+					G.GetComponent<NeuralNetwork>().OnCreation ();
 				}
 			}
 		}
