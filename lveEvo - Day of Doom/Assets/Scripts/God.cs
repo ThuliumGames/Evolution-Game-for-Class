@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class God : MonoBehaviour {
 	
@@ -18,6 +19,8 @@ public class God : MonoBehaviour {
 	public Transform objectToFollow;
 	float height;
 	float ThrowPower = 0;
+	int FoodLeft = 100;
+	public Text FoodText;
 	
 	void Update () {
 		
@@ -64,19 +67,30 @@ public class God : MonoBehaviour {
 		}
 		if (Input.GetKeyUp(KeyCode.F)) {
 			ThrowPower = Mathf.Clamp (ThrowPower, 1, 750);
-			GameObject G = Instantiate (FoodObject, transform.position + ((transform.right*((Input.mousePosition.x-(Screen.width/2))/Screen.width))*3.75f) + ((transform.up*((Input.mousePosition.y-(Screen.height/2))/Screen.height))*2.75f) + (transform.forward*2), transform.rotation);
-			G.transform.LookAt (transform.position);
-			G.transform.Rotate (0, 180, 0);
-			G.GetComponent<Rigidbody>().AddRelativeForce (0, 0, 500*ThrowPower);
+			if (FoodLeft > 0) {
+				if (GameObject.FindObjectOfType<BossAI>() != null) {
+					--FoodLeft;
+				}
+				GameObject G = Instantiate (FoodObject, transform.position + ((transform.right*((Input.mousePosition.x-(Screen.width/2))/Screen.width))*3.75f) + ((transform.up*((Input.mousePosition.y-(Screen.height/2))/Screen.height))*2.75f) + (transform.forward*2), transform.rotation);
+				G.transform.LookAt (transform.position);
+				G.transform.Rotate (0, 180, 0);
+				G.GetComponent<Rigidbody>().AddRelativeForce (0, 0, 500*ThrowPower);
+			}
 			ThrowPower = 0;
 		}
 		
-		if (Input.GetKeyDown(KeyCode.L)) {
-			
-			RaycastHit theObject;
-			
-			if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out theObject, Mathf.Infinity, LM)) {
-				Instantiate (Lightning, new Vector3 (theObject.point.x, 0, theObject.point.z), Quaternion.identity);
+		if (GameObject.FindObjectOfType<BossAI>() != null) {
+			FoodText.color = Color.white;
+			FoodText.text = "\n\nFood Left\n<Size=50>"+FoodLeft+"</Size>";
+		} else {
+		
+			if (Input.GetKeyDown(KeyCode.L)) {
+				
+				RaycastHit theObject;
+				
+				if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out theObject, Mathf.Infinity, LM)) {
+					Instantiate (Lightning, new Vector3 (theObject.point.x, 0, theObject.point.z), Quaternion.identity);
+				}
 			}
 		}
 	}

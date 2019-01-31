@@ -9,14 +9,9 @@ public class Music : MonoBehaviour {
 	public float SwitchTime;
 	float t = 0;
 	
-	void FixedUpdate () {
-		if (t > 0) {
-			if (!GetComponent<AudioSource>().isPlaying) {
-				GetComponent<AudioSource>().Play();
-			}
-		}
+	void Update () {
 		
-		t += Time.fixedDeltaTime;
+		t += Time.deltaTime;
 		
 		if (t >= SwitchTime) {
 			GetComponent<AudioSource>().clip = Theme;
@@ -24,5 +19,11 @@ public class Music : MonoBehaviour {
 			enabled = false;
 		}
 		
+	}
+	
+	void LateUpdate () {
+		if (!GetComponent<AudioSource>().isPlaying) {
+			GetComponent<AudioSource>().Play();
+		}
 	}
 }

@@ -86,6 +86,10 @@ public class Enemy : MonoBehaviour {
 			
 			transform.LookAt(NN[C].transform.position);
 			
+			if (GameObject.FindObjectOfType<BossAI>() != null) {
+				Destroy(this.gameObject);
+			}
+			
 		}
 	}
 	

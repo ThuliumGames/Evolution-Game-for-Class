@@ -33,7 +33,11 @@ public class Mood : MonoBehaviour {
 			
 			size.LookAt (Camera.main.transform.position, Camera.main.transform.up);
 			size.localScale = new Vector3(-1, 1, 1)*Mathf.Clamp(dis/GetComponentInParent<Traits>().Size, 1, 100);
-			CanReproduce.enabled = false;
+			if (NN.Health >= 20 && GameObject.FindObjectOfType<BossAI>() == null) {
+				CanReproduce.enabled = true;
+			} else {
+				CanReproduce.enabled = false;
+			}
 		}
 		
 		if (NN.healthLeft <= 5) {
