@@ -6,24 +6,14 @@ public class Music : MonoBehaviour {
 	
 	public AudioClip Theme;
 	
-	public float SwitchTime;
-	float t = 0;
-	
 	void Update () {
 		
-		t += Time.deltaTime;
-		
-		if (t >= SwitchTime) {
+		if (!GetComponent<AudioSource>().isPlaying) {
 			GetComponent<AudioSource>().clip = Theme;
 			GetComponent<AudioSource>().Play();
+			GetComponent<AudioSource>().loop = true;
 			enabled = false;
 		}
 		
-	}
-	
-	void LateUpdate () {
-		if (!GetComponent<AudioSource>().isPlaying) {
-			GetComponent<AudioSource>().Play();
-		}
 	}
 }

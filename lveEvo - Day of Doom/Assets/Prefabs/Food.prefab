@@ -70,6 +70,7 @@ GameObject:
   - component: {fileID: 4900032132769700}
   - component: {fileID: 54021949245484232}
   - component: {fileID: 135283504090600068}
+  - component: {fileID: 114367793266098834}
   m_Layer: 9
   m_Name: Food
   m_TagString: Food
@@ -298,19 +299,31 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 10
   m_Drag: 0
-  m_AngularDrag: 1
+  m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &114367793266098834
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1783255217149632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1127cd683fd788342a62162f6629dbc9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  KillTime: 40
 --- !u!135 &135283504090600068
 SphereCollider:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1783255217149632}
-  m_Material: {fileID: 13400000, guid: 4f97a1bd019273145b984a3a176c0ed6, type: 2}
+  m_Material: {fileID: 13400000, guid: 01a90cabcf6db2a44844433ae51cb946, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2

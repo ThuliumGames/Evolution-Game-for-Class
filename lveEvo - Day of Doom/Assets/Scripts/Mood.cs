@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Mood : MonoBehaviour {
 	
-	public NeuralNetwork NN;
+	public PlayerBehavior NN;
 	
 	public Transform size;
 	
@@ -19,7 +19,7 @@ public class Mood : MonoBehaviour {
 	
 	void Update () {
 		float dis = Vector3.Distance(size.position, Camera.main.transform.position);
-		if (dis > 75 || dis < 5 || Camera.main.GetComponent<God>().following) {
+		if (dis > 100 || dis < 5 || Camera.main.GetComponent<God>().following) {
 			size.gameObject.SetActive(false);
 			WasActive = false;
 		} else {
@@ -33,7 +33,14 @@ public class Mood : MonoBehaviour {
 			
 			size.LookAt (Camera.main.transform.position, Camera.main.transform.up);
 			size.localScale = new Vector3(-1, 1, 1)*Mathf.Clamp(dis/GetComponentInParent<Traits>().Size, 1, 100);
-			if (NN.Health >= 20 && GameObject.FindObjectOfType<BossAI>() == null) {
+			
+			PlayerBehavior[] N = GameObject.FindObjectsOfType<PlayerBehavior>();
+				
+			//joshpsawyer: https://answers.unity.com/questions/695863/sort-an-array-of-classes-by-a-variable-value.html
+			System.Array.Sort(N, delegate(PlayerBehavior a, PlayerBehavior b) { return b.Score.CompareTo(a.Score); });
+			//
+			
+			if (N[0] == GetComponentInParent<PlayerBehavior>()) {
 				CanReproduce.enabled = true;
 			} else {
 				CanReproduce.enabled = false;

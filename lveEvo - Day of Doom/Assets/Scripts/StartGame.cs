@@ -9,11 +9,19 @@ public class StartGame : MonoBehaviour {
 		Application.LoadLevel("SampleScene");
 	}
 	
+	void Tot () {
+		Application.LoadLevel("Totorial");
+	}
+	
 	void BackToMain () {
 		Application.LoadLevel("EVO Main Menu");
 	}
 	
 	void Quit () {
 		Application.Quit();
+	}
+	
+	void Cred () {
+		Application.LoadLevel("Credits");
 	}
 }

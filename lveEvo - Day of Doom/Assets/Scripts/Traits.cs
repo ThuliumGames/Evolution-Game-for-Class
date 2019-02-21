@@ -5,8 +5,10 @@ using UnityEngine.UI;
 
 public class Traits : MonoBehaviour {
 	
-	string[] charNames1 = {"Tug", "Gru", "Bor", "Du", "Gor", "Dom", "Bru", "cug", "Frub", "Tac", "Boc", "Gub", "Duc", "Ruc", "Brog", "Fu", "Dug", "Gur", "Dub", "Trud"};
-	string[] charNames2 = {"tug", "dub", "gug", "du", "dig", "dom", "bom", "rag", "dor", "bug", "den", "tob", "rub", "gud", "cug", "turk", "dog", "tuc", "", ""};
+	public string[] charNames1 = {"Tug", "Gru", "Bor", "Du", "Gor", "Dom", "Bru", "Cug", "Frub", "Tac", "Boc", "Gub", "Duc", "Ruc", "Brog", "Fu", "Dug", "Gur", "Dub", "Trud", "Kop"};
+	public string[] charNames2 = {"tug", "dub", "gug", "du", "dig", "dom", "bom", "rag", "dor", "bug", "den", "tob", "rub", "gud", "cug", "turk", "dog", "tuc", "gur", "", ""};
+	
+	string ParentsNames = "";
 	
 	//Combined Total of 100
 	public float Size;
@@ -22,22 +24,24 @@ public class Traits : MonoBehaviour {
 	string[] names = {"Score", "Food", "Size", "Speed", "MaxHealth", "AttackPower", "Health"};
 	Text[] stats;
 	Text nameOfChar;
+	Text nameOfCharPar;
 	
 	Text[] Nodes1;
 	Text[] Nodes2;
 	Text[] Nodes3;
 	Text Output;
 	
-	NeuralNetwork Neu;
+	PlayerBehavior Neu;
 	bool CanUpdateLines = true;
 	
 	void Start () {
 		
-		Neu = GetComponent<NeuralNetwork>();
+		Neu = GetComponent<PlayerBehavior>();
 		
 		name = charNames1[Random.Range(0, charNames1.Length)]+charNames2[Random.Range(0, charNames2.Length)];
 		
 		nameOfChar = GameObject.Find("CharName").GetComponent<Text>();
+		nameOfCharPar = GameObject.Find("CharParName").GetComponent<Text>();
 		
 		sideScreen = GameObject.Find("WarriorDisplay").GetComponent<Animator>();
 		
@@ -47,8 +51,8 @@ public class Traits : MonoBehaviour {
 			stats[i] = GameObject.Find(names[i]).GetComponentInChildren<Text>();
 		}
 		
-		Nodes1 = GameObject.Find("WeightWeights").GetComponentsInChildren<Text>();
-		Nodes2 = GameObject.Find("Inputs").GetComponentsInChildren<Text>();
+		Nodes1 = GameObject.Find("Inputs").GetComponentsInChildren<Text>();
+		Nodes2 = GameObject.Find("Hidden1").GetComponentsInChildren<Text>();
 		Nodes3 = GameObject.Find("Animations").GetComponentsInChildren<Text>();
 		Output = GameObject.Find("Output").GetComponentInChildren<Text>();
 	}
@@ -68,18 +72,15 @@ public class Traits : MonoBehaviour {
 				//Set all Text
 				
 				stats[0].text = Neu.Score.ToString();
-				stats[1].text = Neu.Health.ToString();
+				stats[1].text = Neu.Food.ToString();
 				stats[2].text = Size.ToString();
 				stats[3].text = Speed.ToString();
 				stats[4].text = Health.ToString();
 				stats[5].text = AttackPower.ToString();
 				stats[6].text = Neu.healthLeft.ToString();
 				
-				Nodes1[0].text = ((int)(Neu.inputs[0].weight*100)).ToString();
-				Nodes1[1].text = ((int)(Neu.inputs[3].weight*100)).ToString();
-				Nodes1[2].text = "1";
-				
 				nameOfChar.text = name;
+				nameOfCharPar.text = "Son of:\n" + ParentsNames;
 				
 				GameObject.Find("MoodImage").GetComponent<Image>().sprite = GetComponentInChildren<Mood>().HisMood.sprite;
 				
@@ -89,33 +90,79 @@ public class Traits : MonoBehaviour {
 					}
 				}
 				
-				for (int i = 0; i < Nodes2.Length; ++i) {
-					Nodes2[i].text = (((int)(Neu.inputs[i].inputValue*(Neu.inputs[i].weight))).ToString());
-					if (CanUpdateLines) {
-						for (int x = 0; x < Nodes3.Length; ++x) {
-							GameObject Temp = new GameObject("Line"+x, typeof(RectTransform));
-							Temp.tag = "Lines";
-							Temp.transform.parent = Nodes2[i].transform;
-							Temp.transform.position = Nodes2[i].transform.position;
-							Temp.transform.LookAt(Nodes3[x].transform.position);
-							Vector3 Rot = Temp.transform.eulerAngles;
-							Temp.transform.eulerAngles = new Vector3 (0, 0, -Rot.x);
-							Temp.GetComponent<RectTransform>().pivot = new Vector2 (0, 0);
-							Temp.GetComponent<RectTransform>().sizeDelta = new Vector2 (Vector3.Distance(Nodes2[i].transform.position, Nodes3[x].transform.position), 5);
-							Temp.AddComponent<Image>();
-							float theColor = (Neu.inputs[i].weights[x]/20)+0.5f;
-							Temp.GetComponent<Image>().color = new Color(theColor, theColor, theColor, Mathf.Abs(Neu.inputs[i].weights[x]));
-							Temp.transform.parent = GameObject.Find("BG").transform;
+				for (int i = 0; i < Nodes1.Length; ++i) {
+					Nodes1[i].GetComponentInChildren<Text>().text = ""+(int)(Neu.InputLayer[i].InputValue);
+					for (int x = 0; x < Nodes2.Length; ++x) {
+						if (CanUpdateLines) {
+							GameObject Temp1 = new GameObject("Line"+x, typeof(RectTransform));
+							Temp1.tag = "Lines";
+							Temp1.transform.parent = Nodes1[i].transform;
+							Temp1.transform.position = Nodes1[i].transform.position;
+							Temp1.transform.LookAt(Nodes2[x].transform.position);
+							Vector3 Rot = Temp1.transform.eulerAngles;
+							Temp1.transform.eulerAngles = new Vector3 (0, 0, -Rot.x);
+							Temp1.GetComponent<RectTransform>().pivot = new Vector2 (0, 0);
+							Temp1.GetComponent<RectTransform>().sizeDelta = new Vector2 (Vector3.Distance(Nodes1[i].transform.position, Nodes2[x].transform.position), 2);
+							Temp1.AddComponent<Image>();
+							if (Neu.InputLayer[i].Weights[x] >= 0) {
+								Temp1.GetComponent<Image>().color = new Color(0, 1, 0, Mathf.Clamp01(Neu.InputLayer[i].Weights[x]/2));
+							} else {
+								Temp1.GetComponent<Image>().color = new Color(1, 0, 0, Mathf.Clamp01(-Neu.InputLayer[i].Weights[x]/2));	
+							}
+							Temp1.transform.parent = GameObject.Find("BG").transform;
 						}
 					}
 				}
-				CanUpdateLines = false;
+					
+				for (int i = 0; i < Nodes2.Length; ++i) {
+					Nodes2[i].GetComponentInChildren<Text>().text = ""+(int)(Neu.HiddenLayer[i].InputValue*100);
+					for (int x = 0; x < Nodes3.Length; ++x) {
+						if (CanUpdateLines) {
+							GameObject Temp2 = new GameObject("Line"+x, typeof(RectTransform));
+							Temp2.tag = "Lines";
+							Temp2.transform.parent = Nodes2[i].transform;
+							Temp2.transform.position = Nodes2[i].transform.position;
+							Temp2.transform.LookAt(Nodes3[x].transform.position);
+							Vector3 Rot = Temp2.transform.eulerAngles;
+							Temp2.transform.eulerAngles = new Vector3 (0, 0, -Rot.x);
+							Temp2.GetComponent<RectTransform>().pivot = new Vector2 (0, 0);
+							Temp2.GetComponent<RectTransform>().sizeDelta = new Vector2 (Vector3.Distance(Nodes2[i].transform.position, Nodes3[x].transform.position), 2);
+							Temp2.AddComponent<Image>();
+							if (Neu.HiddenLayer[i].Weights[x] >= 0) {
+								Temp2.GetComponent<Image>().color = new Color(0, 1, 0, Mathf.Clamp01(Neu.HiddenLayer[i].Weights[x]/2));
+							} else {
+								Temp2.GetComponent<Image>().color = new Color(1, 0, 0, Mathf.Clamp01(-Neu.HiddenLayer[i].Weights[x]/2));	
+							}
+							Temp2.transform.parent = GameObject.Find("BG").transform;
+						}
+					}
+				}
 				
 				for (int i = 0; i < Nodes3.Length; ++i) {
-					Nodes3[i].text = ((int)Neu.allValues[i]).ToString();
+					Nodes3[i].GetComponentInChildren<Text>().text = ""+(int)(Neu.OutputLayer[i].InputValue*100);
+					if (CanUpdateLines) {
+						GameObject Temp3 = new GameObject("Line"+i, typeof(RectTransform));
+						Temp3.tag = "Lines";
+						Temp3.transform.parent = Nodes3[i].transform;
+						Temp3.transform.position = Nodes3[i].transform.position;
+						Temp3.transform.LookAt(Output.transform.position);
+						Vector3 Rot = Temp3.transform.eulerAngles;
+						Temp3.transform.eulerAngles = new Vector3 (0, 0, -Rot.x);
+						Temp3.GetComponent<RectTransform>().pivot = new Vector2 (0, 0);
+						Temp3.GetComponent<RectTransform>().sizeDelta = new Vector2 (Vector3.Distance(Nodes3[i].transform.position, Output.transform.position), 2);
+						Temp3.AddComponent<Image>();
+						Temp3.transform.parent = GameObject.Find("BG").transform;
+					}
+				}
+				
+				if (Time.frameCount%60 == 0) {
+					CanUpdateLines = true;
+				} else {
+					CanUpdateLines = false;
 				}
 				
 				Output.text = Neu.AnimClipInfo[0].clip.name;
+				
 			} else {
 				CanUpdateLines = true;
 			}
@@ -124,11 +171,14 @@ public class Traits : MonoBehaviour {
 			if (sideScreen.GetCurrentAnimatorClipInfo(0)[0].clip.name == "Shown") {
 				sideScreen.Play("HideSide");
 			}
+			CanUpdateLines = true;
 		}
 	}
 	
 	public void CreateNew () {
 		//Randomize for 1st Generation
+		
+		ParentsNames = "You";
 		
 		Speed = Random.Range(0, 101);
 		Size = (100-Speed)+Random.Range (-10, 11);
@@ -146,11 +196,13 @@ public class Traits : MonoBehaviour {
 	
 	public void CreateSimilar (Traits T1, Traits T2) {
 		//Randomize for allOther Generations
+		
+		ParentsNames = T1.name + " And " + T2.name;
 
 		int T1Or2 = Random.Range (0, 2);
 		
 		float R1 = (T1.Neu.Score/10);
-		if (R1 == 0) {
+		if (Mathf.Abs(R1) < 1) {
 			if (R1 >= 0) {
 				R1 = 1;
 			} else {

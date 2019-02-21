@@ -12,12 +12,12 @@ public class BossEnemy : MonoBehaviour {
 	public bool almostAttacking = false;
 	public bool attacking = false;
 	
-	public NeuralNetwork NN;
+	public PlayerBehavior NN;
 	
 	void Update () {
-		if (GameObject.FindObjectsOfType<NeuralNetwork>().Length == 1) {
+		if (GameObject.FindObjectsOfType<PlayerBehavior>().Length == 1) {
 		
-			NN = GameObject.FindObjectOfType<NeuralNetwork>();
+			NN = GameObject.FindObjectOfType<PlayerBehavior>();
 			
 			if (Health <= 0) {
 				Application.LoadLevel("Win");
@@ -28,14 +28,18 @@ public class BossEnemy : MonoBehaviour {
 			if (GetComponentInParent<Rigidbody>().transform.position.y < 138) {
 				GetComponentInParent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
 			}		
-		} else if (GameObject.FindObjectsOfType<NeuralNetwork>().Length == 0) {
-			Application.LoadLevel("Loose");
+		} else if (GameObject.FindObjectsOfType<PlayerBehavior>().Length == 0) {
+			Application.LoadLevel("Lose");
 		}
 	}
 	
 	void OnTriggerEnter (Collider other) {
-		if (other.gameObject == NN.gameObject && attacking  && !NN.Blocking && canGetHit) {
-			NN.healthLeft -= 10;
+		if (other.gameObject == NN.gameObject && attacking && canGetHit) {
+			if (!NN.Blocking) {
+				NN.healthLeft -= 10;
+			} else {
+				NN.healthLeft -= 5;
+			}
 			canGetHit = false;
 		}
 	}

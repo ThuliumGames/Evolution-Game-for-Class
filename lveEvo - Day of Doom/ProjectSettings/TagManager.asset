@@ -8,6 +8,9 @@ TagManager:
   - Food
   - Lightning
   - Lines
+  - Meat
+  - Bait
+  - Toxic
   layers:
   - Default
   - TransparentFX

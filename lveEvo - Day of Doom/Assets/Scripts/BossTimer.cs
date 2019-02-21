@@ -23,7 +23,7 @@ public class BossTimer : MonoBehaviour {
 		
 		MaxTime = Mathf.Clamp(MaxTime, 30, 1800);
 		
-		if (GameObject.FindObjectsOfType<NeuralNetwork>().Length != 0) {
+		if (GameObject.FindObjectsOfType<PlayerBehavior>().Length != 0) {
 			CanStart = true;
 		}
 		
@@ -65,7 +65,7 @@ public class BossTimer : MonoBehaviour {
 		
 		if (MaxTime-T <= 0 && !BossHasStarted) {
 			BossHasStarted = true;
-			Destroy (GameObject.FindObjectOfType<AudioSource>().gameObject);
+			Destroy (GameObject.Find("Music"));
 			Instantiate (BossPrefab, Vector3.zero, Quaternion.Euler(Vector3.zero));
 		}
 	}
